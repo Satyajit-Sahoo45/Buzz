@@ -101,11 +101,19 @@ export default function Navbar({ user }: { user: CustomUser | null }) {
   return (
     <nav className="p-6 flex justify-between items-center shadow-sm">
       <h1 className="text-xl md:text-2xl font-extrabold">BUZZ</h1>
-      <div className="flex items-center space-x-2 md:space-x-6 text-gray-700">
-        <Link href="/">Home</Link>
-        <Link href="/features">Features</Link>
+      <div className="flex items-center space-x-2 md:space-x-6 md:gap-2">
+        <Link href="/" className="text-gray-200 hover:text-gray-400">
+          Home
+        </Link>
+        <Link href="/features" className="text-gray-200 hover:text-gray-400">
+          Features
+        </Link>
         {!user ? (
-          <Button onClick={() => signIn("google")} variant="link">
+          <Button
+            onClick={() => signIn("google")}
+            variant="secondary"
+            className="gap-1"
+          >
             <LogInIcon className="mr-w" /> Sign In
           </Button>
         ) : (

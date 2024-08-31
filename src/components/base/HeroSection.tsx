@@ -22,7 +22,7 @@ export default function HeroSection() {
         <img
           src="/images/conversation.svg"
           alt="Illustration"
-          className="w-full h-64"
+          className="w-full h-72"
         />
       </div>
     </section>
