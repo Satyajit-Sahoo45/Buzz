@@ -1,48 +1,64 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
-import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createChatSchema,
   createChatSchemaType,
 } from "@/validations/ChatSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
+import { CustomUser } from "@/app/api/auth/[...nextauth]/options";
 import axios, { AxiosError } from "axios";
+import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
 import { toast } from "sonner";
 
-export default function CreateChat({ user }: { user: CustomUser }) {
-  const [open, setOpen] = useState(false);
+export default function EditGroupChat({
+  user,
+  group,
+  open,
+  setOpen,
+}: {
+  user: CustomUser;
+  group: GroupChatType;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const [loading, setLoading] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<createChatSchemaType>({
     resolver: zodResolver(createChatSchema),
   });
+
+  useEffect(() => {
+    setValue("title", group.title);
+    setValue("passcode", group.passcode);
+  }, [group]);
+
   const onSubmit = async (payload: createChatSchemaType) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(CHAT_GROUP, payload, {
+      const { data } = await axios.put(`${CHAT_GROUP}/${group.id}`, payload, {
         headers: {
           Authorization: user.token,
         },
       });
 
       if (data?.message) {
-        toast.success(data?.message);
         setOpen(false);
+        toast.success(data?.message);
       }
       setLoading(false);
     } catch (error) {
@@ -57,12 +73,9 @@ export default function CreateChat({ user }: { user: CustomUser }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button>Create Chat</Button>
-      </DialogTrigger>
       <DialogContent onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Create your new Chat</DialogTitle>
+          <DialogTitle>Update group chat</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-4">
@@ -75,18 +88,7 @@ export default function CreateChat({ user }: { user: CustomUser }) {
           </div>
           <div className="mt-4">
             <Button className="w-full" disabled={loading}>
-              {loading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <span>Processing</span>
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-700 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-blue-700 rounded-full animate-bounce delay-200"></div>
-                    <div className="w-2 h-2 bg-blue-700 rounded-full animate-bounce delay-400"></div>
-                  </div>
-                </div>
-              ) : (
-                "Submit"
-              )}
+              {loading ? "Processing.." : "Submit"}
             </Button>
           </div>
         </form>
