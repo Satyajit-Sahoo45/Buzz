@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
+import { clearCache } from "@/actions/common";
 
 export default function CreateChat({ user }: { user: CustomUser }) {
   const [open, setOpen] = useState(false);
@@ -41,8 +42,9 @@ export default function CreateChat({ user }: { user: CustomUser }) {
       });
 
       if (data?.message) {
-        toast.success(data?.message);
         setOpen(false);
+        toast.success(data?.message);
+        clearCache("dashboard");
       }
       setLoading(false);
     } catch (error) {

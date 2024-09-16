@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { CHAT_GROUP } from "@/lib/apiAuthRoutes";
 import { toast } from "sonner";
+import { clearCache } from "@/actions/common";
 
 export default function DeleteChatGroup({
   open,
@@ -34,13 +35,14 @@ export default function DeleteChatGroup({
         },
       });
       if (data?.message) {
+        clearCache("dashboard");
         toast.success(data?.message);
         setOpen(false);
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
-      toast.error("Somethign went wrong.please try again later.");
+      toast.error("Something went wrong.please try again later.");
     }
   };
 
