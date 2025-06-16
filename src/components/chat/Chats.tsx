@@ -53,22 +53,69 @@ export default function Chats({
   };
 
   return (
-    <div className="flex flex-col h-[94vh]  p-4">
+    <div className="flex flex-col h-[94vh] p-4">
       <div className="flex-1 overflow-y-auto flex flex-col-reverse">
         <div ref={messagesEndRef} />
         <div className="flex flex-col gap-2">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`max-w-sm rounded-lg p-2 ${
-                message.name === chatUser?.name
-                  ? "bg-gradient-to-r from-blue-400 to-blue-600  text-white self-end"
-                  : "bg-gradient-to-r from-gray-200 to-gray-300 text-black self-start"
-              }`}
-            >
-              {message.message}
-            </div>
-          ))}
+          {messages.map((message) => {
+            const isCurrentUser = message.name === chatUser?.name;
+            return (
+              <div
+                key={message.id}
+                className={`flex items-end ${
+                  isCurrentUser ? "justify-end" : "justify-start"
+                }`}
+              >
+                {!isCurrentUser && (
+                  <div className="flex items-start gap-2">
+                    {/* Avatar */}
+                    <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-xl">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="white"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                      >
+                        <path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v3h20v-3c0-3.3-6.7-5-10-5z" />
+                      </svg>
+                    </div>
+
+                    <div className="bg-[#1E1E1E] text-white px-3 py-2 rounded-xl relative max-w-xs">
+                      {/* Username / phone number */}
+                      <div className="text-xs text-gray-300">
+                        {message.name}
+                      </div>
+
+                      {/* Actual message */}
+                      <div className="text-sm mt-1">{message.message}</div>
+
+                      {/* Timestamp */}
+                      <div className="text-[11px] text-gray-400 text-right mt-1">
+                        ``
+                        {new Date(message.created_at).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Current user message */}
+                {isCurrentUser && (
+                  <div className="bg-blue-600 text-white px-3 py-2 rounded-xl max-w-xs">
+                    <div className="text-sm">{message.message}</div>
+                    <div className="text-[11px] text-gray-200 text-right mt-1">
+                      {new Date(message.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
       <form onSubmit={handleSubmit} className="mt-2 flex items-center">
