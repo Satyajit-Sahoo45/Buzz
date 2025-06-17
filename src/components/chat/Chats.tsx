@@ -91,7 +91,6 @@ export default function Chats({
 
                       {/* Timestamp */}
                       <div className="text-[11px] text-gray-400 text-right mt-1">
-                        ``
                         {new Date(message.created_at).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
